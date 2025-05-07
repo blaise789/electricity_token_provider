@@ -2,8 +2,8 @@ package com.electricity_distribution_system.eds.services;
 
 import com.electricity_distribution_system.eds.enums.ERole;
 import com.electricity_distribution_system.eds.enums.EUserStatus;
+import com.electricity_distribution_system.eds.exceptions.BadRequestException;
 import com.electricity_distribution_system.eds.models.User;
-import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

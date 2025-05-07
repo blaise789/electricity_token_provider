@@ -13,20 +13,20 @@ import lombok.Data;
 
 public class CreateUserDTO {
 
-    @Email
+    @Email(message = "Invalid email given.")
     private String email;
 
-    @NotBlank
+    @NotBlank(message = "First name is required.")
     private String firstName;
 
-    @NotBlank
+    @NotBlank(message = "Last name is required.")
     private String lastName;
 
-    @NotBlank
+    @NotBlank(message = "Phone number is required")
     @Pattern(regexp = "[0-9]{9,12}", message = "Your phone is not a valid tel we expect 2507***, or 07*** or 7***")
     private String telephone;
 
-    @NotBlank
+    @NotBlank(message = "ID is required.")
 //    validate the goverment_id
     @ValidNationalId
     private String government_id;
@@ -35,6 +35,6 @@ public class CreateUserDTO {
 
     private ERole role;
 
-    @ValidPassword
+    @ValidPassword(message = "Password is invalid")
     private String password;
 }

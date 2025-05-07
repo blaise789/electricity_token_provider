@@ -34,13 +34,15 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public User create(User user) throws BadRequestException {
-
+        System.out.println("here");
         try {
             Optional<User> userOptional = this.userRepository.findByEmail(user.getEmail());
             if (userOptional.isPresent())
                 throw new BadRequestException(String.format("User with email '%s' already exists", user.getEmail()));
             return this.userRepository.save(user);
+
         } catch (DataIntegrityViolationException ex) {
+            System.out.println(ex);
 //            String errorMessage = Utility.getConstraintViolationMessage(ex, user);
             throw new BadRequestException(ex.getMessage());
         }

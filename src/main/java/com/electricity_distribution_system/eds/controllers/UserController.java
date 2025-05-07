@@ -9,7 +9,7 @@ import com.electricity_distribution_system.eds.services.IUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
+import com.electricity_distribution_system.eds.exceptions.BadRequestException ;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,6 +49,7 @@ public class UserController {
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
         user.setGender(dto.getGender());
+
         user.setTelephone(dto.getTelephone());
         user.setPassword(encodedPassword);
         user.setRoles(Collections.singleton(role));

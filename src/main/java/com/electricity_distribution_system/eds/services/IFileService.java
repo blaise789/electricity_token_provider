@@ -1,6 +1,7 @@
 package com.electricity_distribution_system.eds.services;
 
-import java.io.File;
+import com.electricity_distribution_system.eds.models.File;
+
 import java.util.UUID;
 
 public interface IFileService {
