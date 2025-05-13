@@ -1,6 +1,7 @@
 package com.electricity_distribution_system.eds.controllers;
 
 import com.electricity_distribution_system.eds.dtos.requests.CreateUserDTO;
+import com.electricity_distribution_system.eds.dtos.requests.LoginDTO;
 import com.electricity_distribution_system.eds.dtos.response.ApiResponse;
 import com.electricity_distribution_system.eds.models.Role;
 import com.electricity_distribution_system.eds.models.User;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.electricity_distribution_system.eds.exceptions.BadRequestException ;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,6 +32,8 @@ public class UserController {
     private final IUserService userService;
     private final RoleRepository roleRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final JavaMailSender mailSender;
+
 
 
 
@@ -38,7 +42,7 @@ public class UserController {
 //    createUser
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse> register(@RequestBody  @Valid  CreateUserDTO dto) throws BadRequestException {
+    public ResponseEntity<ApiResponse> register( @Valid @RequestBody    CreateUserDTO dto) throws BadRequestException {
         User user = new User();
 
         String encodedPassword = passwordEncoder.encode(dto.getPassword());

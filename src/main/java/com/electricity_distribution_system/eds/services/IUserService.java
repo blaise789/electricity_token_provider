@@ -7,7 +7,7 @@ import com.electricity_distribution_system.eds.models.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.io.File;
+import com.electricity_distribution_system.eds.models.File;
 import java.util.Optional;
 import java.util.UUID;
 

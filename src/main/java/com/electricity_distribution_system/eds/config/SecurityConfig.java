@@ -49,11 +49,11 @@ public class SecurityConfig {
         http.
                 csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(request ->
                         request
-                                .requestMatchers("/**")
-                                .permitAll()
-                                .requestMatchers(
-                                        "/api/v1/files/load-file/**"
-                                ).permitAll()
+//                                .requestMatchers("/**")
+//                                .permitAll()
+//                                .requestMatchers(
+//                                        "/api/v1/files/load-file/**"
+//                                ).permitAll()
                                 .requestMatchers(
                                         "/api/v1/auth/**",
                                         "/api/v1/users/register"

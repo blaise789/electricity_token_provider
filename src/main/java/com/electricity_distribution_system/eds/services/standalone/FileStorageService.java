@@ -5,6 +5,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
@@ -19,6 +20,7 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 @Service
+@Configuration
 public class FileStorageService {
     @Value("${uploads.directory}")
     private String root;
@@ -30,7 +32,7 @@ public class FileStorageService {
     private String docsFolder;
 
 
-    @Bean
+    @PostConstruct
     public void init() {
         try {
 //            create folder
