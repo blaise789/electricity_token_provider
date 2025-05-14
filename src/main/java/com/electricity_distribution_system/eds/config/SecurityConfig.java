@@ -30,18 +30,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 //    bcrypt encoder
-    @Bean
-    public BCryptPasswordEncoder getBCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
         return new JwtAuthenticationFilter();
     }
 
-   private final JwtAuthenticationEntryPoint authenticationEntryPoint;
+    private final JwtAuthenticationEntryPoint authenticationEntryPoint;
     private final CustomUserDetailsService userDetailsService;
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

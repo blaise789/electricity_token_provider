@@ -1,5 +1,6 @@
 package com.electricity_distribution_system.eds.services.impl;
 
+import com.electricity_distribution_system.eds.dtos.requests.UpdateUserDTO;
 import com.electricity_distribution_system.eds.enums.ERole;
 import com.electricity_distribution_system.eds.enums.EUserStatus;
 import com.electricity_distribution_system.eds.exceptions.BadRequestException;
@@ -28,14 +29,16 @@ public class UserServiceImpl implements IUserService {
     private final UserRepository userRepository;
    private final IFileService fileService;
    private final FileStorageService fileStorageService;
+
     @Override
     public Page<User> getAll(Pageable pageable) {
         return this.userRepository.findAll(pageable);
     }
 
     @Override
-    public User getById(long id) {
-        return null;
+    public User getById(UUID id) {
+        return this.userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+
     }
 
     @Override
@@ -52,6 +55,11 @@ public class UserServiceImpl implements IUserService {
 //            String errorMessage = Utility.getConstraintViolationMessage(ex, user);
             throw new BadRequestException(ex.getMessage());
         }
+    }
+
+    @Override
+    public User update(UUID id, UpdateUserDTO userDTO) throws BadRequestException {
+        return null;
     }
 
     @Override
@@ -135,7 +143,7 @@ public class UserServiceImpl implements IUserService {
 
         @Override
         public Optional<User> findByActivationCode(String activationCode) {
-            return this.userRepository.findByActivationCode(activationCode);
+            return null;
 
 
         }

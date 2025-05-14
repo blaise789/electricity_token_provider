@@ -60,17 +60,15 @@ public class User extends TimeStampAudit {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private File profileImage;
 
-    @Column(name = "activation_code")
-    private String activationCode;
+    @Column(name = "verification_token")
+    private String verificationToken;
+
+    @Column(name = "reset_password_token")
+    private String resetPasswordToken;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private EUserStatus status = EUserStatus.PENDING;
-
-    @JsonIgnore
-    @Column(name = "activation_code_expires_at")
-    private LocalDateTime activationCodeExpiresAt;
-
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();

@@ -2,26 +2,35 @@ package com.electricity_distribution_system.eds.controllers;
 
 import com.electricity_distribution_system.eds.dtos.requests.CreateUserDTO;
 import com.electricity_distribution_system.eds.dtos.requests.LoginDTO;
+import com.electricity_distribution_system.eds.dtos.requests.UpdateUserDTO;
 import com.electricity_distribution_system.eds.dtos.response.ApiResponse;
+import com.electricity_distribution_system.eds.enums.ERole;
+import com.electricity_distribution_system.eds.models.File;
 import com.electricity_distribution_system.eds.models.Role;
 import com.electricity_distribution_system.eds.models.User;
 import com.electricity_distribution_system.eds.repositories.RoleRepository;
+import com.electricity_distribution_system.eds.services.IFileService;
 import com.electricity_distribution_system.eds.services.IUserService;
+import com.electricity_distribution_system.eds.utils.Constants;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.electricity_distribution_system.eds.exceptions.BadRequestException ;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.Collections;
+import java.util.UUID;
 
 @Slf4j
 @RequestMapping("/api/v1/users")
@@ -33,6 +42,7 @@ public class UserController {
     private final RoleRepository roleRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JavaMailSender mailSender;
+    private final IFileService fileService;
 
 
 
@@ -63,4 +73,80 @@ public class UserController {
         return ResponseEntity.created(uri).body(ApiResponse.success("User Created successfully",createdUser));
     }
 
+
+    @GetMapping(path = "/all/{role}")
+    public ResponseEntity<ApiResponse> getAllUsersByRole(
+            @RequestParam(value = "page", defaultValue = Constants.DEFAULT_PAGE_NUMBER) int page,
+            @RequestParam(value = "size", defaultValue = Constants.DEFAULT_PAGE_SIZE) int limit,
+            @PathVariable(value = "role") ERole role
+    ) {
+        Pageable pageable = (Pageable) PageRequest.of(page, limit, Sort.Direction.ASC, "id");
+        return ResponseEntity.ok(ApiResponse.success("Users fetched successfully", userService.getAllByRole(pageable, role)));
+    }
+
+    @GetMapping(path = "/search")
+    public Page<User> searchUsers(
+            @RequestParam(value = "page", defaultValue = Constants.DEFAULT_PAGE_NUMBER) int page,
+            @RequestParam(value = "size", defaultValue = Constants.DEFAULT_PAGE_SIZE) int limit,
+            @RequestParam(value = "searchKey") String searchKey
+    ) {
+        Pageable pageable = (Pageable) PageRequest.of(page, limit, Sort.Direction.ASC, "id");
+        return userService.searchUser(pageable, searchKey);
+    }
+
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<ApiResponse> getById(@PathVariable(value = "id") UUID id) {
+        return ResponseEntity.ok(ApiResponse.success("User fetched successfully", this.userService.getById(id)));
+    }
+
+
+    @GetMapping(path = "/current-user")
+    public ResponseEntity<ApiResponse> currentlyLoggedInUser() {
+        return ResponseEntity.ok(ApiResponse.success("Currently logged in user fetched", userService.getLoggedInUser()));
+    }
+
+    @PutMapping(path = "/update")
+    public ResponseEntity<ApiResponse> update(@RequestBody UpdateUserDTO dto) {
+        User updated = this.userService.update(this.userService.getLoggedInUser().getId(), dto);
+        return ResponseEntity.ok(ApiResponse.success("User updated successfully", updated));
+    }
+
+//
+//    @PutMapping(path = "/upload-profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    public ResponseEntity<ApiResponse> uploadProfileImage(
+//            @RequestParam("file") MultipartFile document
+//    ) {
+//        if (!Utility.isImageFile(document)) {
+//            throw new BadRequestException("Only image files are allowed");
+//        }
+//        User user = this.userService.getLoggedInUser();
+//        File file = this.fileService.create(document, userProfilesDirectory);
+//
+//        User updated = this.userService.changeProfileImage(user.getId(), file);
+//
+//        return ResponseEntity.ok(ApiResponse.success("File saved successfully", updated));
+//
+//    }
+//
+//    @PatchMapping(path = "/remove-profile")
+//    public ResponseEntity<ApiResponse> removeProfileImage() {
+//        User user = this.userService.getLoggedInUser();
+//        User updated = this.userService.removeProfileImage(user.getId());
+//        return ResponseEntity.ok(ApiResponse.success("Profile image removed successfully", updated));
+//    }
+//
+//    @DeleteMapping("/delete")
+//    public ResponseEntity<ApiResponse> deleteMyAccount() {
+//        User user = this.userService.getLoggedInUser();
+//        this.userService.delete(user.getId());
+//        return ResponseEntity.ok(ApiResponse.success("Account deleted successfully"));
+//    }
+//
+//    @DeleteMapping("/delete/{id}")
+//    public ResponseEntity<ApiResponse> deleteByAdmin(
+//            @PathVariable(value = "id") UUID id
+//    ) {
+//        this.userService.delete(id);
+//        return ResponseEntity.ok(ApiResponse.success("Account deleted successfully"));
+//    }
 }

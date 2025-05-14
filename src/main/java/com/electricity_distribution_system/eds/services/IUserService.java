@@ -1,5 +1,6 @@
 package com.electricity_distribution_system.eds.services;
 
+import com.electricity_distribution_system.eds.dtos.requests.UpdateUserDTO;
 import com.electricity_distribution_system.eds.enums.ERole;
 import com.electricity_distribution_system.eds.enums.EUserStatus;
 import com.electricity_distribution_system.eds.exceptions.BadRequestException;
@@ -13,8 +14,9 @@ import java.util.UUID;
 
 public interface IUserService {
 Page<User> getAll(Pageable pageable);
-User getById(long id);
+User getById(UUID id);
 User create(User user) throws BadRequestException;
+User update(UUID id,UpdateUserDTO userDTO) throws BadRequestException;
 User save(User user);
 
 Page<User> getAllByRole(Pageable pageable, ERole role);
@@ -31,6 +33,7 @@ User getLoggedInUser();
     User removeProfileImage(UUID id);
 
     Optional<User> findByActivationCode(String verificationCode);
+
 
 
 }
