@@ -6,12 +6,14 @@ import com.electricity_distribution_system.eds.enums.EUserStatus;
 import com.electricity_distribution_system.eds.exceptions.BadRequestException;
 import com.electricity_distribution_system.eds.exceptions.ResourceNotFoundException;
 import com.electricity_distribution_system.eds.models.File;
+import com.electricity_distribution_system.eds.models.Role;
 import com.electricity_distribution_system.eds.models.User;
 import com.electricity_distribution_system.eds.repositories.UserRepository;
 import com.electricity_distribution_system.eds.services.IFileService;
 import com.electricity_distribution_system.eds.services.IUserService;
 import com.electricity_distribution_system.eds.services.standalone.FileStorageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import org.springframework.data.domain.Page;
@@ -19,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -29,7 +32,8 @@ public class UserServiceImpl implements IUserService {
     private final UserRepository userRepository;
    private final IFileService fileService;
    private final FileStorageService fileStorageService;
-
+  @Value("${uploads.directory.user_profiles}")
+  private String userProfilesPath;
     @Override
     public Page<User> getAll(Pageable pageable) {
         return this.userRepository.findAll(pageable);
@@ -75,9 +79,9 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public Page<User> getAllByRole(Pageable pageable, ERole role) {
-//
-        return this.userRepository.findByRoles(pageable,role);
+        return this.userRepository.findByRoleName(pageable,role);
     }
+
 
     @Override
     public Page<User> searchUser(Pageable pageable, String searchKey) {
@@ -111,17 +115,19 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public User changeProfileImage(UUID id, File file) {
-        User entity=this.userRepository.findById(id).orElseThrow(
-                ()->new ResourceNotFoundException("User","id",id.toString())
-        );
-        File existingFile=entity.getProfileImage();
-        if(existingFile!=null) {
-            fileStorageService.removeFileOnDisk(existingFile.getPath());
-        }
+        public User changeProfileImage(UUID id, MultipartFile document) {
+            User entity=this.userRepository.findById(id).orElseThrow(
+                    ()->new ResourceNotFoundException("User","id",id.toString())
+            );
+            File existingFile=entity.getProfileImage();
+            if(existingFile!=null) {
+                fileStorageService.removeFileOnDisk(existingFile.getPath());
 
-  entity.setProfileImage(existingFile);
-  return this.userRepository.save(entity);
+            }
+            File file=fileService.create(document,userProfilesPath);
+
+      entity.setProfileImage(file);
+      return this.userRepository.save(entity);
         }
     @Override
     public User removeProfileImage(UUID id) {

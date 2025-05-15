@@ -78,6 +78,7 @@ public class SecurityConfig {
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userDetailsService);
+//        comparing passwords
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
     }

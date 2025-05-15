@@ -3,6 +3,7 @@ package com.electricity_distribution_system.eds.services.standalone;
 import com.electricity_distribution_system.eds.exceptions.AppFailureException;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,9 +17,11 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+@Slf4j
 @Service
 @Configuration
 public class FileStorageService {
@@ -34,24 +37,30 @@ public class FileStorageService {
 
     @PostConstruct
     public void init() {
-        try {
+//        try {
 //            create folder
-            Files.createDirectories(Paths.get(root, userProfilesFolder, docsFolder));
-
-        } catch (IOException e) {
-            throw new AppFailureException(e.getMessage());
-        }
+//            Files.createDirectories(Paths.get(root, userProfilesFolder, docsFolder));
+//        } catch (IOException e) {
+//            throw new AppFailureException(e.getMessage());
+//        }
     }
 
     public String save(MultipartFile file, String directory, String filename) {
         try {
-            Path path = Paths.get(directory);
-            Files.copy(file.getInputStream(), path.resolve(Objects.requireNonNull(filename)));
-            return path + "/" + filename;
-        } catch (Exception e) {
-            throw new AppFailureException(e.getMessage());
+            Path dirPath = Paths.get(directory);
+            if (Files.notExists(dirPath)) {
+                Files.createDirectories(dirPath);
+            }
+            Path filePath = dirPath.resolve(Objects.requireNonNull(filename));
+
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            return filePath.toString();
+        } catch (IOException e) {
+            throw new AppFailureException("Failed to save file: " + e.getMessage(), e);
         }
     }
+
 
 
     public UrlResource load(String uploadDirectory, String fileName) {

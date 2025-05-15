@@ -12,10 +12,12 @@ import com.electricity_distribution_system.eds.repositories.RoleRepository;
 import com.electricity_distribution_system.eds.services.IFileService;
 import com.electricity_distribution_system.eds.services.IUserService;
 import com.electricity_distribution_system.eds.utils.Constants;
+import com.electricity_distribution_system.eds.utils.Utility;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.electricity_distribution_system.eds.exceptions.BadRequestException ;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +26,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -40,9 +43,11 @@ import java.util.UUID;
 public class UserController {
     private final IUserService userService;
     private final RoleRepository roleRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
     private final JavaMailSender mailSender;
     private final IFileService fileService;
+    @Value("${uploads.directory.user_profiles}")
+    private String  userProfilesDirectory;
 
 
 
@@ -111,23 +116,20 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success("User updated successfully", updated));
     }
 
-//
-//    @PutMapping(path = "/upload-profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//    public ResponseEntity<ApiResponse> uploadProfileImage(
-//            @RequestParam("file") MultipartFile document
-//    ) {
-//        if (!Utility.isImageFile(document)) {
-//            throw new BadRequestException("Only image files are allowed");
-//        }
-//        User user = this.userService.getLoggedInUser();
-//        File file = this.fileService.create(document, userProfilesDirectory);
-//
-//        User updated = this.userService.changeProfileImage(user.getId(), file);
-//
-//        return ResponseEntity.ok(ApiResponse.success("File saved successfully", updated));
-//
-//    }
-//
+
+    @PutMapping(path = "/upload-profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse> uploadProfileImage(
+            @RequestParam("file") MultipartFile document
+    ) {
+        if (!Utility.isImageFile(document)) {
+            throw new BadRequestException("Only image files are allowed");
+        }
+        User user = this.userService.getLoggedInUser();
+        User updated = this.userService.changeProfileImage(user.getId(), document);
+        return ResponseEntity.ok(ApiResponse.success("File saved successfully", updated));
+
+    }
+
 //    @PatchMapping(path = "/remove-profile")
 //    public ResponseEntity<ApiResponse> removeProfileImage() {
 //        User user = this.userService.getLoggedInUser();
