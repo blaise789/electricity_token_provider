@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.electricity_distribution_system</groupId>
-	<artifactId>electricity_distribution_system</artifactId>
+	<artifactId>vehicle_tracking</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>electricity_distribution_system</name>
 	<description>electricty_distribution_system</description>

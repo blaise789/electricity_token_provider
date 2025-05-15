@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>License Plate Expiration Notice</title>
+</head>
+<body>
+<p>Dear <span th:text="${ownerName}">Owner</span>,</p>
+
+<p>This is a reminder that your license plate <strong th:text="${plateNumber}">ABC123</strong>
+    will expire on <strong th:text="${#temporals.format(expirationDate, 'dd MMMM yyyy')}">01 January 2023</strong>.</p>
+
+<p>You have <strong th:text="${daysRemaining}">30</strong> days remaining to renew your license plate.</p>
+
+<p>Please visit your nearest RRA office or our online portal to complete the renewal process.</p>
+
+<p>Best regards,<br>
+    Rwanda Revenue Authority</p>
+</body>
+</html>
