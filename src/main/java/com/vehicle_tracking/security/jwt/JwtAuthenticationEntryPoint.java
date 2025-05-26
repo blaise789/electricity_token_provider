@@ -1,5 +1,5 @@
 package com.vehicle_tracking.security.jwt;
-import com.vehicle_tracking.dtos.response.ApiResponse;
+import com.vehicle_tracking.dtos.response.ApiResponseDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,6 +21,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         ObjectMapper objectMapper = new ObjectMapper();
-        response.getOutputStream().println(objectMapper.writeValueAsString(ApiResponse.error("You are not authorized", authException)));
+        response.getOutputStream().println(objectMapper.writeValueAsString(ApiResponseDTO.error("You are not authorized", authException)));
     }
 }

@@ -2,6 +2,7 @@ package com.vehicle_tracking.services;
 
 import com.vehicle_tracking.dtos.requests.PlateNumberRequest;
 import com.vehicle_tracking.dtos.response.PlateNumberResponse;
+import com.vehicle_tracking.enums.EPlateStatus;
 import jakarta.validation.Valid;
 
 import java.util.List;
@@ -11,5 +12,5 @@ public interface IPlateNumberService {
 
     List<PlateNumberResponse> getPlateNumbersByOwner(Long ownerId);
 
-    PlateNumberResponse updatePlateStatus(Long plateId, String status);
+    PlateNumberResponse updatePlateStatus(Long plateId, EPlateStatus status);
 }

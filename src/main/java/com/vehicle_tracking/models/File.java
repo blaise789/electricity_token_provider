@@ -2,7 +2,7 @@ package com.vehicle_tracking.models;
 
 
 
-import com.vehicle_tracking.audits.InitiatorAudit;
+import com.vehicle_tracking.audits.EntityAudit;
 import com.vehicle_tracking.enums.EFileSizeType;
 import com.vehicle_tracking.enums.EFileStatus;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -19,7 +19,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "files", uniqueConstraints = {@UniqueConstraint(columnNames = "path")})
 @JsonIgnoreProperties(value = {"path"}, allowGetters = true)
-public class File extends InitiatorAudit {
+public class File extends EntityAudit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

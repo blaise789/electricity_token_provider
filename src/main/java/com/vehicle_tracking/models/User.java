@@ -1,6 +1,6 @@
 package com.vehicle_tracking.models;
 
-import com.vehicle_tracking.audits.TimeStampAudit;
+import com.vehicle_tracking.audits.EntityAudit;
 import com.vehicle_tracking.enums.EGender;
 import com.vehicle_tracking.enums.EUserStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -23,7 +23,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Entity
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"email"}), @UniqueConstraint(columnNames = {"telephone"})})
-public class User extends TimeStampAudit {
+public class User extends EntityAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")

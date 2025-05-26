@@ -1,4 +1,5 @@
 package com.vehicle_tracking.models;
+import com.vehicle_tracking.audits.EntityAudit;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -7,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +19,7 @@ import java.util.List;
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "chassisNumber")
         })
-public class Vehicle {
+public class Vehicle extends EntityAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,14 +29,13 @@ public class Vehicle {
     private String chassisNumber;
 
     @NotBlank
-    private String manufactureCompany;
+    private String manufacturer;
 
     @NotNull
     private Integer manufactureYear;
 
-    @NotNull
-    @Positive
-    private BigDecimal initialPrice;
+    @Positive(message = " price should be greater than or equal to 1")
+    private double price;
 
     @NotBlank
     private String modelName;
@@ -44,24 +43,14 @@ public class Vehicle {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "current_owner_id", nullable = false)
-    private Owner currentOwner;
+    private Owner owner;
 
     @NotNull
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "plate_number_id", nullable = false)
-    private PlateNumber plateNumber;
+    @JoinColumn(name = " plate_id", nullable = false)
+    private Plate plate;
 
     @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<VehicleTransfer> transferHistory = new ArrayList<>();
 
-    public Vehicle(String chassisNumber, String manufactureCompany, Integer manufactureYear,
-                   BigDecimal initialPrice, String modelName, Owner currentOwner, PlateNumber plateNumber) {
-        this.chassisNumber = chassisNumber;
-        this.manufactureCompany = manufactureCompany;
-        this.manufactureYear = manufactureYear;
-        this.initialPrice = initialPrice;
-        this.modelName = modelName;
-        this.currentOwner = currentOwner;
-        this.plateNumber = plateNumber;
-    }
 }

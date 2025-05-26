@@ -1,6 +1,7 @@
 package com.vehicle_tracking.models;
 
 
+import com.vehicle_tracking.audits.EntityAudit;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -8,7 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "vehicle_transfers")
-public class VehicleTransfer {
+public class VehicleTransfer  extends EntityAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -39,29 +39,19 @@ public class VehicleTransfer {
     @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "previous_plate_id", nullable = false)
-    private PlateNumber previousPlate;
+    private Plate previousPlate;
 
     @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "new_plate_id", nullable = false)
-    private PlateNumber newPlate;
+    private Plate newPlate;
 
     @NotNull
     @Positive
-    private BigDecimal transferAmount;
+    private double transferAmount=0.0;
 
     @NotNull
-    private LocalDateTime transferDate;
+    private LocalDateTime transferDate=LocalDateTime.now();
 
-    public VehicleTransfer(Vehicle vehicle, Owner previousOwner, Owner newOwner,
-                           PlateNumber previousPlate, PlateNumber newPlate,
-                           BigDecimal transferAmount) {
-        this.vehicle = vehicle;
-        this.previousOwner = previousOwner;
-        this.newOwner = newOwner;
-        this.previousPlate = previousPlate;
-        this.newPlate = newPlate;
-        this.transferAmount = transferAmount;
-        this.transferDate = LocalDateTime.now();
-    }
+
 }

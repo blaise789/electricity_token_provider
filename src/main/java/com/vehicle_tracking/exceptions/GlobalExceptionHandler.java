@@ -1,6 +1,6 @@
 package com.vehicle_tracking.exceptions;
 
-import com.vehicle_tracking.dtos.response.ApiResponse;
+import com.vehicle_tracking.dtos.response.ApiResponseDTO;
 import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -26,10 +26,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseEntity<ApiResponse> handleRuntimeException(RuntimeException ex) {
+    public ResponseEntity<ApiResponseDTO> handleRuntimeException(RuntimeException ex) {
         return ResponseEntity
                 .internalServerError()
-                .body(ApiResponse.error(ex.getMessage()));
+                .body(ApiResponseDTO.error(ex.getMessage()));
     }
 
     @Override
@@ -46,7 +46,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             validationErrors.put(fieldName, errorMessage);
         });
 
-        ApiResponse response = ApiResponse.error(
+        ApiResponseDTO response = ApiResponseDTO.error(
                 "Validation failed",
                 validationErrors
         );

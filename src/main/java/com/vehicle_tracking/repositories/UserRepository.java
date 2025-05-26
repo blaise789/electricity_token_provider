@@ -2,6 +2,7 @@ package com.vehicle_tracking.repositories;
 
 import com.vehicle_tracking.enums.ERole;
 import com.vehicle_tracking.models.User;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,6 +19,7 @@ public interface UserRepository  extends JpaRepository<User, Long> {
 
     Optional<User> findByEmail(String email);
 //    Page<User> findAll(Pageable pageable);
+    Optional<User> findByEmailAndNationalId(@NotBlank String email, String nationalId);
 
     @Query("SELECT u FROM User u JOIN u.roles r WHERE r.name = :role")
     Page<User> findByRoleName(Pageable pageable, @Param("role") ERole role);

@@ -1,6 +1,8 @@
 package com.vehicle_tracking.models;
 
 
+import com.vehicle_tracking.audits.EntityAudit;
+import com.vehicle_tracking.enums.EPlateStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -12,11 +14,11 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "plate_numbers",
+@Table(name = "plates",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "plateNumber")
         })
-public class PlateNumber {
+public class Plate extends EntityAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,21 +31,20 @@ public class PlateNumber {
     private LocalDate issuedDate;
 
     @Enumerated(EnumType.STRING)
-    private PlateStatus status = PlateStatus.AVAILABLE;
+    private EPlateStatus status = EPlateStatus.AVAILABLE;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
     private Owner owner;
 
-    @OneToOne(mappedBy = "plateNumber", fetch = FetchType.LAZY)
-    private Vehicle currentVehicle;
+    @OneToOne(mappedBy = "plate", fetch = FetchType.LAZY , cascade = CascadeType.ALL)
+    private Vehicle vehicle;
 
-    public enum PlateStatus {
-        AVAILABLE,
-        IN_USE
-    }
 
-    public PlateNumber(String plateNumber, LocalDate issuedDate, Owner owner) {
+
+    @Column(nullable = false)
+    private LocalDate expirationDate;
+    public Plate(String plateNumber, LocalDate issuedDate, Owner owner) {
         this.plateNumber = plateNumber;
         this.issuedDate = issuedDate;
         this.owner = owner;

@@ -1,21 +1,21 @@
 package com.vehicle_tracking.services;
 
+import com.vehicle_tracking.dtos.requests.CreateOwnerDTO;
 import com.vehicle_tracking.dtos.requests.OwnerRequest;
-import com.vehicle_tracking.dtos.response.OwnerResponse;
+import com.vehicle_tracking.dtos.response.OwnerResponseDTO;
+import com.vehicle_tracking.models.Owner;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface IOwnerService {
+    OwnerResponseDTO    createOwner(@Valid OwnerRequest ownerRequest);
     void deleteOwner(Long id);
 
-    OwnerResponse updateOwner(Long id, @Valid OwnerRequest ownerRequest);
+    OwnerResponseDTO updateOwner(Long id, @Valid OwnerRequest ownerRequest);
 
-    Page<OwnerResponse> searchOwners(String nationalId, String email, String phone, Pageable pageable);
 
-    Page<OwnerResponse> getAllOwners(Pageable pageable);
+    Page<Owner> searchOwners(Pageable pageable,String nationalId,String email,String phoneNumber);
 
-    OwnerResponse registerOwner(@Valid OwnerRequest ownerRequest);
-
-    OwnerResponse getOwnerById(Long id);
+   Owner getOwnerById(Long id);
 }

@@ -2,7 +2,7 @@ package com.vehicle_tracking.controllers;
 
 import com.vehicle_tracking.dtos.requests.CreateUserDTO;
 import com.vehicle_tracking.dtos.requests.UpdateUserDTO;
-import com.vehicle_tracking.dtos.response.ApiResponse;
+import com.vehicle_tracking.dtos.response.ApiResponseDTO;
 import com.vehicle_tracking.enums.ERole;
 import com.vehicle_tracking.models.Role;
 import com.vehicle_tracking.models.User;
@@ -54,7 +54,7 @@ public class UserController {
 //    createUser
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse> register( @Valid @RequestBody    CreateUserDTO dto) throws BadRequestException {
+    public ResponseEntity<ApiResponseDTO> register(@Valid @RequestBody    CreateUserDTO dto) throws BadRequestException {
         User user = new User();
         String encodedPassword = passwordEncoder.encode(dto.getPassword());
         Role role = roleRepository.findByName(dto.getRole()).orElseThrow(
@@ -71,18 +71,18 @@ public class UserController {
         User createdUser = userService.create(user);
         log.info("Created user: {}", createdUser);
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().toString());
-        return ResponseEntity.created(uri).body(ApiResponse.success("User Created successfully",createdUser));
+        return ResponseEntity.created(uri).body(ApiResponseDTO.success("User Created successfully",createdUser));
     }
 
 
     @GetMapping(path = "/all/{role}")
-    public ResponseEntity<ApiResponse> getAllUsersByRole(
+    public ResponseEntity<ApiResponseDTO> getAllUsersByRole(
             @RequestParam(value = "page", defaultValue = Constants.DEFAULT_PAGE_NUMBER) int page,
             @RequestParam(value = "size", defaultValue = Constants.DEFAULT_PAGE_SIZE) int limit,
             @PathVariable(value = "role") ERole role
     ) {
         Pageable pageable = (Pageable) PageRequest.of(page, limit, Sort.Direction.ASC, "id");
-        return ResponseEntity.ok(ApiResponse.success("Users fetched successfully", userService.getAllByRole(pageable, role)));
+        return ResponseEntity.ok(ApiResponseDTO.success("Users fetched successfully", userService.getAllByRole(pageable, role)));
     }
 
     @GetMapping(path = "/search")
@@ -96,25 +96,25 @@ public class UserController {
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<ApiResponse> getById(@PathVariable(value = "id") UUID id) {
-        return ResponseEntity.ok(ApiResponse.success("User fetched successfully", this.userService.getById(id)));
+    public ResponseEntity<ApiResponseDTO> getById(@PathVariable(value = "id") UUID id) {
+        return ResponseEntity.ok(ApiResponseDTO.success("User fetched successfully", this.userService.getById(id)));
     }
 
 
     @GetMapping(path = "/current-user")
-    public ResponseEntity<ApiResponse> currentlyLoggedInUser() {
-        return ResponseEntity.ok(ApiResponse.success("Currently logged in user fetched", userService.getLoggedInUser()));
+    public ResponseEntity<ApiResponseDTO> currentlyLoggedInUser() {
+        return ResponseEntity.ok(ApiResponseDTO.success("Currently logged in user fetched", userService.getLoggedInUser()));
     }
 
     @PutMapping(path = "/update")
-    public ResponseEntity<ApiResponse> update(@RequestBody UpdateUserDTO dto) {
+    public ResponseEntity<ApiResponseDTO> update(@RequestBody UpdateUserDTO dto) {
         User updated = this.userService.update(this.userService.getLoggedInUser().getId(), dto);
-        return ResponseEntity.ok(ApiResponse.success("User updated successfully", updated));
+        return ResponseEntity.ok(ApiResponseDTO.success("User updated successfully", updated));
     }
 
 
     @PutMapping(path = "/upload-profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse> uploadProfileImage(
+    public ResponseEntity<ApiResponseDTO> uploadProfileImage(
             @RequestParam("file") MultipartFile document
     ) {
         if (!Utility.isImageFile(document)) {
@@ -122,29 +122,29 @@ public class UserController {
         }
         User user = this.userService.getLoggedInUser();
         User updated = this.userService.changeProfileImage(user.getId(), document);
-        return ResponseEntity.ok(ApiResponse.success("File saved successfully", updated));
+        return ResponseEntity.ok(ApiResponseDTO.success("File saved successfully", updated));
 
     }
 
 //    @PatchMapping(path = "/remove-profile")
-//    public ResponseEntity<ApiResponse> removeProfileImage() {
+//    public ResponseEntity<ApiResponseDTO> removeProfileImage() {
 //        User user = this.userService.getLoggedInUser();
 //        User updated = this.userService.removeProfileImage(user.getId());
-//        return ResponseEntity.ok(ApiResponse.success("Profile image removed successfully", updated));
+//        return ResponseEntity.ok(ApiResponseDTO.success("Profile image removed successfully", updated));
 //    }
 //
 //    @DeleteMapping("/delete")
-//    public ResponseEntity<ApiResponse> deleteMyAccount() {
+//    public ResponseEntity<ApiResponseDTO> deleteMyAccount() {
 //        User user = this.userService.getLoggedInUser();
 //        this.userService.delete(user.getId());
-//        return ResponseEntity.ok(ApiResponse.success("Account deleted successfully"));
+//        return ResponseEntity.ok(ApiResponseDTO.success("Account deleted successfully"));
 //    }
 //
 //    @DeleteMapping("/delete/{id}")
-//    public ResponseEntity<ApiResponse> deleteByAdmin(
+//    public ResponseEntity<ApiResponseDTO> deleteByAdmin(
 //            @PathVariable(value = "id") UUID id
 //    ) {
 //        this.userService.delete(id);
-//        return ResponseEntity.ok(ApiResponse.success("Account deleted successfully"));
+//        return ResponseEntity.ok(ApiResponseDTO.success("Account deleted successfully"));
 //    }
 }
