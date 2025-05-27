@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <property name="LOGS_DIR" value="./logs" /> <!-- Or any directory you prefer -->
+
+    <!-- Standard Console Appender -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Standard Rolling File Appender for general application logs -->
+    <appender name="APP_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS_DIR}/application.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOGS_DIR}/archived/application-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>30</maxHistory> <!-- Keep 30 days of history -->
+        </rollingPolicy>
+    </appender>
+
+    <!-- Audit Log Rolling File Appender -->
+    <appender name="AUDIT_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS_DIR}/audit.log</file> <!-- Separate file for audit logs -->
+        <encoder>
+            <!-- Keep audit logs concise and parsable if needed -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOGS_DIR}/archived/audit-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>90</maxHistory> <!-- Keep audit logs for longer, e.g., 90 days -->
+        </rollingPolicy>
+    </appender>
+
+    <!-- Configure the AUDIT_LOGGER to use the AUDIT_FILE appender -->
+    <!-- additivity="false" prevents audit logs from also going to the root logger's appenders (e.g., console) -->
+    <logger name="AUDIT_LOGGER" level="INFO" additivity="false">
+        <appender-ref ref="AUDIT_FILE" />
+        <appender-ref ref="CONSOLE"/> <!-- Optional: also send audit logs to console -->
+    </logger>
+
+    <!-- Configure the general application logger from LoggingAspect -->
+    <logger name="com.vehicle_tracking.aspects.LoggingAspect" level="DEBUG" additivity="false">
+        <appender-ref ref="APP_FILE" />
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <!-- Root logger configuration -->
+    <root level="INFO"> <!-- Set default log level for the application -->
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="APP_FILE" />
+    </root>
+
+    <!-- Spring Boot's own logging, usually good to keep at INFO or WARN -->
+    <logger name="org.springframework.boot" level="INFO"/>
+    <logger name="org.springframework.web" level="INFO"/>
+    <logger name="org.springframework.security" level="INFO"/>
+    <logger name="org.hibernate.SQL" level="DEBUG"/> <!-- To see SQL queries if needed -->
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/> <!-- To see SQL query parameters -->
+
+</configuration>

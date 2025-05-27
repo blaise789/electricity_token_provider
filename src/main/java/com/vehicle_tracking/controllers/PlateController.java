@@ -4,8 +4,13 @@ import com.vehicle_tracking.dtos.requests.PlateNumberRequest;
 import com.vehicle_tracking.dtos.response.PlateNumberResponse;
 import com.vehicle_tracking.enums.EPlateStatus;
 import com.vehicle_tracking.services.IPlateNumberService;
+import com.vehicle_tracking.utils.Constants;
 import jakarta.validation.Valid;
+import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +23,7 @@ import java.util.List;
 public class PlateController {
 
 
-    private  final IPlateNumberService plateNumberService;
+    private final IPlateNumberService plateNumberService;
 
 
     @PostMapping("/api/owners/{ownerId}/plates")
@@ -30,14 +35,9 @@ public class PlateController {
 
 
     @GetMapping("/api/owners/{ownerId}/plates")
-    public ResponseEntity<List<PlateNumberResponse>> getPlateNumbersByOwner(@PathVariable Long ownerId) {
-        return ResponseEntity.ok(plateNumberService.getPlateNumbersByOwner(ownerId));
+    public ResponseEntity<Page<PlateNumberResponse>> getPlateNumbersByOwner(@PathVariable Long ownerId, @RequestParam(value = "page", defaultValue = Constants.DEFAULT_PAGE_NUMBER) int page, @RequestParam(value = "size", defaultValue = Constants.DEFAULT_PAGE_SIZE) int limit) {
+        Pageable pageable = PageRequest.of(page, limit);
+        return ResponseEntity.ok(plateNumberService.getPlateNumbersByOwner(ownerId,pageable));
     }
-
-    @PutMapping("/api/plates/{plateId}/status")
-    public ResponseEntity<PlateNumberResponse> updatePlateStatus(
-            @PathVariable Long plateId,
-            @RequestParam EPlateStatus status) {
-        return ResponseEntity.ok(plateNumberService.updatePlateStatus(plateId, status));
-    }
+//
 }

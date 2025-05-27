@@ -1,11 +1,9 @@
 package com.vehicle_tracking.controllers;
 
+import com.vehicle_tracking.annotations.Auditable;
 import com.vehicle_tracking.dtos.requests.CreateTransferDTO;
 import com.vehicle_tracking.dtos.response.ApiResponseDTO;
-import com.vehicle_tracking.dtos.response.VehicleTransferResponseDTO;
 import com.vehicle_tracking.exceptions.BadRequestException;
-import com.vehicle_tracking.repositories.VehicleRepository;
-import com.vehicle_tracking.services.IOwnerShipService;
 import com.vehicle_tracking.services.ITransferService;
 import com.vehicle_tracking.utils.Constants;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,12 +13,9 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/transfers")
@@ -37,6 +32,7 @@ public class TransferController {
     })
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
+    @Auditable(action = "TRANSFER_VEHICLE")
     ResponseEntity<ApiResponseDTO> createTransfer(@Valid @RequestBody CreateTransferDTO dto)
             throws BadRequestException {
         transferService.createTransfer(dto);

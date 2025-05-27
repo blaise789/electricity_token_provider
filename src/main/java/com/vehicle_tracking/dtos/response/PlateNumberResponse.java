@@ -4,13 +4,13 @@ import com.vehicle_tracking.enums.EPlateStatus;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Getter
 @Setter
 public class PlateNumberResponse {
     private Long id;
     private String plateNumber;
-    private Date issuedDate;
-    private EPlateStatus available;
+    private LocalDate issuedDate;
+    private EPlateStatus status;
 }

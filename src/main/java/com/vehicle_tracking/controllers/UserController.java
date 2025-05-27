@@ -1,5 +1,6 @@
 package com.vehicle_tracking.controllers;
 
+import com.vehicle_tracking.annotations.Auditable;
 import com.vehicle_tracking.dtos.requests.CreateUserDTO;
 import com.vehicle_tracking.dtos.requests.UpdateUserDTO;
 import com.vehicle_tracking.dtos.response.ApiResponseDTO;
@@ -54,6 +55,7 @@ public class UserController {
 //    createUser
 
     @PostMapping("/register")
+    @Auditable(action = "USER_SIGNUP_ATTEMPT")
     public ResponseEntity<ApiResponseDTO> register(@Valid @RequestBody    CreateUserDTO dto) throws BadRequestException {
         User user = new User();
         String encodedPassword = passwordEncoder.encode(dto.getPassword());

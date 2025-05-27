@@ -1,6 +1,8 @@
 package com.vehicle_tracking.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.vehicle_tracking.audits.EntityAudit;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

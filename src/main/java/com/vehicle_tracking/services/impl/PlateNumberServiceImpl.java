@@ -12,9 +12,15 @@ import com.vehicle_tracking.services.IPlateNumberService;
 import com.vehicle_tracking.utils.Mapper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PlateNumberServiceImpl implements IPlateNumberService {
@@ -31,15 +37,26 @@ public class PlateNumberServiceImpl implements IPlateNumberService {
         plateNumber.setIssuedDate(plateNumberRequest.getIssuedDate());
         plateNumber.setExpirationDate(plateNumberRequest.getExpiryDate());
        Plate newPlateNumber= plateNumberRepository.save(plateNumber);
-       PlateNumberResponse plateNumberResponse = new PlateNumberResponse();
-       plateNumber.setPlateNumber(newPlateNumber.getPlateNumber());
-       return plateNumberResponse;
+       log.info("{},{}",newPlateNumber.getIssuedDate(),newPlateNumber.getStatus());
+       return Mapper.getMapper().map(newPlateNumber, PlateNumberResponse.class);
 
     }
 
     @Override
-    public List<PlateNumberResponse> getPlateNumbersByOwner(Long ownerId) {
-        return List.of();
+    public Page<PlateNumberResponse> getPlateNumbersByOwner(Long ownerId, Pageable pageable) {
+ Owner owner=ownerService.getOwnerById(ownerId);
+
+        Pageable sortedPageable = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by("issuedDate").descending()
+        );
+Page<Plate> owner_plates= plateNumberRepository.findByOwner(owner,sortedPageable);
+        return owner_plates.map((plate)->
+                Mapper.getMapper().map(plate, PlateNumberResponse.class)
+                );
+
+
     }
 
     @Override

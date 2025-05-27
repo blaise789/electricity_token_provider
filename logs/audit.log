@@ -1,0 +1,2 @@
+2025-05-27 21:51:43.331 [AUDIT_START] User: 'bigirabagaboblaise@gmail.com', Action: 'LOGIN_ATTEMPT', Method: 'AuthController.login(..)', Args: [com.vehicle_tracking.dtos.requests.LoginDTO@662be530], IP: 0:0:0:0:0:0:0:1
+2025-05-27 21:51:43.587 [AUDIT_SUCCESS] User: 'bigirabagaboblaise@gmail.com', Action: 'LOGIN_ATTEMPT', Method: 'AuthController.login(..)', Result: <200 OK OK,com.vehicle_tracking.dtos.response.ApiResponseDTO@7e0c4fcc,[]>, Duration: 255ms, IP: 0:0:0:0:0:0:0:1

@@ -32,8 +32,6 @@ public class VehicleServiceImpl implements IVehicleService {
     private final PlateRepository plateNumberRepository;
     @Override
     public VehicleResponseDTO registerVehicle(CreateVehicleRequestDTO dto) {
-
-
         Owner owner = ownerRepository.findById(dto.getOwnerId())
                 .orElseThrow(() -> new RuntimeException("Owner not found with ID: " + dto.getOwnerId()));
         Plate plateNumber = plateNumberRepository.findById(dto.getPlateNumberId())
@@ -78,9 +76,10 @@ public class VehicleServiceImpl implements IVehicleService {
     }
 
     @Override
-    public List<Page<VehicleResponseDTO>> getAllVehicles(Pageable pageable) {
+    public Page<VehicleResponseDTO> getAllVehicles(Pageable pageable) {
             Page<Vehicle> page = vehicleRepository.findAll(pageable);
-            return List.of(page.map(vehicle -> Mapper.getMapper().map(vehicle, VehicleResponseDTO.class)));
+            log.info("{}",page.getContent());
+            return page.map(vehicle -> Mapper.getMapper().map(vehicle, VehicleResponseDTO.class));
     }
 
 

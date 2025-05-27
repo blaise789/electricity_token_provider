@@ -16,5 +16,4 @@ public class CreateVehicleRequestDTO {
     private String manufacturer;
     private double price;
     private Long plateNumberId;
-    private String plateNumber;
 }

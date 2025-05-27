@@ -1,5 +1,6 @@
 package com.vehicle_tracking.controllers;
 
+import com.vehicle_tracking.annotations.Auditable;
 import com.vehicle_tracking.dtos.requests.LoginDTO;
 import com.vehicle_tracking.dtos.response.ApiResponseDTO;
 import com.vehicle_tracking.dtos.response.AuthResponse;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final IAuthService authService;
     @PostMapping("/login")
+    @Auditable(action = "LOGIN_ATTEMPT")
     public ResponseEntity<ApiResponseDTO> login(@Valid @RequestBody LoginDTO dto) throws BadRequestException {
         log.info("Login request: {}", dto);
         AuthResponse authResponse= authService.login(dto.getEmail(), dto.getPassword());

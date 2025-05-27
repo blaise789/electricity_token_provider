@@ -12,6 +12,6 @@ public interface IVehicleService {
     public VehicleResponseDTO registerVehicle(CreateVehicleRequestDTO vehicle);
     public VehicleResponseDTO displayVehicleDetails(Long id);
   public VehicleResponseDTO searchVehicle(String searchKey);
-  public List<Page<VehicleResponseDTO>> getAllVehicles(Pageable pageable);
+  public Page<VehicleResponseDTO> getAllVehicles(Pageable pageable);
 
 }
