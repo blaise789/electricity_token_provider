@@ -1,72 +1,34 @@
-version: '3.8' # Specify Docker Compose file format version
-
 services:
-  # Your Spring Boot Application Service
   vehicle-tracking-app:
-    build:
-      context: . # Looks for Dockerfile in the current directory
-      dockerfile: Dockerfile # Specifies the Dockerfile to use
-
-      # JAR_FILE_PATH: build/libs/your-specific-app.jar # Example if you need to specify
-    container_name: vehicle-tracking-app-container # Optional: give a specific name to the container
+    build: .
     ports:
-      - "8080:8080" # Map host port 8080 to container port 8080
+      - "7000:7000"
     environment:
-      - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_db:5432/vehicle_tracking_db
-      - SPRING_DATASOURCE_USERNAME=postgres # Should match POSTGRES_USER below
-      - SPRING_DATASOURCE_PASSWORD=postgres # Should match POSTGRES_PASSWORD below
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update # Or validate, create-drop, etc. for Docker environment
-      - SPRING_DATA_REDIS_HOST=redis_cache
-      - SPRING_DATA_REDIS_PORT=6379
-      # Add any other environment variables your application needs
-      # - LOGGING_LEVEL_ROOT=INFO
-      # - LOGGING_LEVEL_COM_VEHICLE_TRACKING=DEBUG
-    depends_on: # Ensures these services start before your app attempts to connect
-      - postgres_db
-      - redis_cache
-    networks:
-      - app-network
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db-container:5432/vehicle_tracking_db
+      SPRING_DATASOURCE_USERNAME: ${DB_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-postgres}
+    depends_on:
+      postgres-db-container:
+        condition: service_healthy
 
-  # PostgreSQL Database Service
-  postgres_db:
-    image: "postgres:15-alpine" # Use a specific version of PostgreSQL, Alpine for smaller size
-    container_name: postgres-db-container
-    ports:
-      - "5433:5432" # Map host port 5433 to container port 5432 (to avoid conflict if you have local PG on 5432)
+  postgres-db-container:
+    image: postgres:15
     environment:
-      - POSTGRES_DB=vehicle_tracking_db # Name of the database to create
-      - POSTGRES_USER=youruser           # Username for the database
-      - POSTGRES_PASSWORD=yourpassword     # Password for the user
+      POSTGRES_DB: vehicle_tracking_db
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
     volumes:
-      - postgres_app_data:/var/lib/postgresql/data # Persist database data across container restarts
-    networks:
-      - app-network
-    healthcheck: # Optional: Wait for PostgreSQL to be ready
-      test: ["CMD-SHELL", "pg_isready -U youruser -d vehicle_tracking_db"]
-      interval: 10s
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
       timeout: 5s
       retries: 5
 
-  # Redis Cache Service
-  redis_cache:
-    image: "redis:7-alpine" # Use a specific version of Redis, Alpine for smaller size
-    container_name: redis-cache-container
+  redis-cache-container:
+    image: redis:7
     ports:
-      - "6379:6379" # Map host port 6379 to container port 6379 (useful for direct inspection)
-    networks:
-      - app-network
-    healthcheck: # Optional: Wait for Redis to be ready
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      - "6379:6379"
 
-# Define the network for services to communicate
-networks:
-  app-network:
-    driver: bridge # Default network driver
-
-# Define named volumes for data persistence
 volumes:
-  postgres_app_data: # This volume will store PostgreSQL data
+  postgres_data:
