@@ -23,7 +23,7 @@ import java.util.Set;
 @EnableScheduling
 @EnableTransactionManagement
 @EnableAsync
-//@EnableCaching
+@EnableCaching
 @EnableSpringDataWebSupport(pageSerializationMode = EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO)
 public class VehicleTrackingApplication {
 	private final RoleRepository roleRepository;
