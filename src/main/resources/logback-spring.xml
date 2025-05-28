@@ -49,7 +49,7 @@
     </logger>
 
     <!-- Configure the general application logger from LoggingAspect -->
-    <logger name="com.vehicle_tracking.aspects.LoggingAspect" level="DEBUG" additivity="false">
+    <logger name="com.vehicle_tracking.vehicle_tracking.aspects.LoggingAspect" level="DEBUG" additivity="false">
         <appender-ref ref="APP_FILE" />
         <appender-ref ref="CONSOLE"/>
     </logger>

@@ -20,7 +20,7 @@ WORKDIR /app
 COPY --from=builder /app/application.jar ./application.jar
 
 # Expose the port your Spring Boot application runs on (default is 8080)
-EXPOSE 8080
+EXPOSE 7000
 
 # Environment variables for Spring Boot application configuration.
 # These will be overridden by docker-compose.yml for service discovery if used.
