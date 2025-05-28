@@ -1,6 +1,8 @@
 package com.vehicle_tracking.services.impl;
 
+import com.vehicle_tracking.dtos.CustomPageDTO;
 import com.vehicle_tracking.dtos.requests.PlateNumberRequest;
+import com.vehicle_tracking.dtos.response.PagedResponse;
 import com.vehicle_tracking.dtos.response.PlateNumberResponse;
 import com.vehicle_tracking.enums.EPlateStatus;
 import com.vehicle_tracking.exceptions.ResourceNotFoundException;
@@ -13,6 +15,7 @@ import com.vehicle_tracking.utils.Mapper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +29,7 @@ import java.util.List;
 public class PlateNumberServiceImpl implements IPlateNumberService {
     private final PlateRepository plateNumberRepository;
     private final IOwnerService ownerService;
+    private static final String OWNER_PLATES_CACHE_PREFIX = "ownerPlates:";
 
 
     @Override
@@ -43,19 +47,21 @@ public class PlateNumberServiceImpl implements IPlateNumberService {
     }
 
     @Override
-    public Page<PlateNumberResponse> getPlateNumbersByOwner(Long ownerId, Pageable pageable) {
- Owner owner=ownerService.getOwnerById(ownerId);
+//    @Cacheable(cacheNames = "owner  " , key = "#ownerId + '_' + #page + '_' + #size")
+    public CustomPageDTO<PlateNumberResponse> getPlateNumbersByOwner(Long ownerId, int page, int limit) throws Exception {
+
+        Owner owner = ownerService.getOwnerById(ownerId);
 
         Pageable sortedPageable = PageRequest.of(
-                pageable.getPageNumber(),
-                pageable.getPageSize(),
+                page,
+                limit,
                 Sort.by("issuedDate").descending()
         );
-Page<Plate> owner_plates= plateNumberRepository.findByOwner(owner,sortedPageable);
-        return owner_plates.map((plate)->
+        Page<Plate> owner_plates = plateNumberRepository.findByOwner(owner, sortedPageable);
+        Page<PlateNumberResponse> plateNumberResponses= owner_plates.map((plate) ->
                 Mapper.getMapper().map(plate, PlateNumberResponse.class)
-                );
-
+        );
+        return new CustomPageDTO<>(plateNumberResponses);
 
     }
 

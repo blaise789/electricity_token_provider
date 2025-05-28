@@ -1,0 +1,14 @@
+.git
+.gitignore
+.idea/
+*.iml
+target/
+build/
+logs/
+.DS_Store
+Dockerfile
+.dockerignore
+README.md
+HELP.md
+mvnw
+mvnw.cmd

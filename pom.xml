@@ -52,6 +52,15 @@
 			<artifactId>guava</artifactId>
 			<version>30.1-jre</version>
 		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>com.fasterxml.jackson.datatype</groupId>-->
+<!--			<artifactId>jackson-datatype-jsr310</artifactId>-->
+<!--			&lt;!&ndash; Spring Boot will manage the version if you're using its parent POM &ndash;&gt;-->
+<!--		</dependency>-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-aop</artifactId>
