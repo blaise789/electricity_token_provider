@@ -41,20 +41,6 @@ public class TransferController {
     }
 
     // get all transfer by search vehicle chassis number or plateNumber by admin
-    @Operation(summary = " search   vehicle by admin ", description = " get all transfer by search    vehicle chassis number  or plateNumber", security = @SecurityRequirement(name = "bearerAuth"))
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/vehicle/history")
-    public ResponseEntity<ApiResponseDTO> getVehicleHistory(
-            @RequestParam(value = "page", defaultValue = Constants.DEFAULT_PAGE_NUMBER) int page,
-            @RequestParam(value = "size", defaultValue = Constants.DEFAULT_PAGE_SIZE) int limit,
-            @RequestParam(required = false) String chassisNumber,
-            @RequestParam(required = false) String plateNumber) {
-        Pageable pageable = Pageable.ofSize(limit).withPage(page);
-
-        return ResponseEntity
-                .ok(ApiResponseDTO.success(" transfers  fetched successfully",
-                        transferService.getVehicleHistory(chassisNumber, plateNumber, pageable)));
-    }
 
 
 }

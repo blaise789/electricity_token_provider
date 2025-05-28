@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 
 public class OwnerController {
 
-
     private final IOwnerService ownerService;
 
 
